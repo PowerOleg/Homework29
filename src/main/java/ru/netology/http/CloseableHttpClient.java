@@ -11,7 +11,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,20 +20,19 @@ public class CloseableHttpClient {
 
     public static void main(String[] args) {
         org.apache.http.impl.client.CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setUserAgent("Yandex/22.11.3.818 (64-bit)")
+                .setUserAgent("Http Apache client 4.5.14")
                 .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectTimeout(5000)
-                        .setSocketTimeout(30000)
-                        .setRedirectsEnabled(false)
-                        .build()).build();
-
+                .setConnectTimeout(200)
+                .setSocketTimeout(3000)
+                .setRedirectsEnabled(false)
+                .build()).build();
         HttpGet request = new HttpGet(REMOTE_URI);
         request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
         request.addHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
-        request.addHeader(HttpHeaders.ACCEPT_LANGUAGE, "en");
+        request.addHeader(HttpHeaders.ACCEPT_LANGUAGE, "ru-en");
 
         try (CloseableHttpResponse response = httpClient.execute(request)) {
-            Arrays.stream(response.getAllHeaders()).forEach(n -> System.out.println(n));
+//            Arrays.stream(response.getAllHeaders()).forEach(n -> System.out.println(n));
             List<Cat> cats = jsonMapper.readValue(response.getEntity().getContent(), new TypeReference<List<Cat>>() {
             });
             cats.stream().filter(n -> n.getUpvotes() != null).filter(n -> !Objects.equals(n.getUpvotes(), "0")).forEach(n -> System.out.println(n));
